@@ -61,19 +61,19 @@ class ReportService
         foreach ($rows as $row) {
             $firstCol = $row->firstChild();
             if (is_numeric($ticket = $firstCol->innerHtml)) {
-                if (is_numeric($profit = $row->lastChild()->innerHtml)) {
+                if (is_numeric($profit = str_replace(' ', '', $row->lastChild()->innerHtml))) {
                     $columns = $row->find('td');
                     if (($type = $columns[array_search('Type', $this->fields)]->innerHtml) == 'buy') {
                         foreach ($this->fields as $key => $col) {
                             if ($col == 'Profit') {
-                                $balance += (int)$columns[$key]->innerHtml;
+                                $balance += (float)$columns[$key]->innerHtml;
                                 $data[$i][$col] = $balance;
                             } else {
                                 $data[$i][$col] = $columns[$key]->innerHtml;
                             }
                         }
                     } else {
-                        $balance += (int)$profit;
+                        $balance += (float)$profit;
                         $data[$i] = [
                             'Ticket' => $ticket,
                             'Type' => $type,
