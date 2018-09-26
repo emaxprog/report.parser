@@ -56,6 +56,7 @@ class ReportService
         $eof = false;
         $dom = new Dom;
         $dom->loadFromFile($filePath);
+        $balance = 0;
         $rows = $dom->find('tr');
         foreach ($rows as $row) {
             $firstCol = $row->firstChild();
@@ -64,13 +65,19 @@ class ReportService
                     $columns = $row->find('td');
                     if (($type = $columns[array_search('Type', $this->fields)]->innerHtml) == 'buy') {
                         foreach ($this->fields as $key => $col) {
-                            $data[$i][$col] = $columns[$key]->innerHtml;
+                            if ($col == 'Profit') {
+                                $balance += (int)$columns[$key]->innerHtml;
+                                $data[$i][$col] = $balance;
+                            } else {
+                                $data[$i][$col] = $columns[$key]->innerHtml;
+                            }
                         }
                     } else {
+                        $balance += (int)$profit;
                         $data[$i] = [
                             'Ticket' => $ticket,
                             'Type' => $type,
-                            'Profit' => $profit
+                            'Profit' => $balance
                         ];
                     }
                     if (!$eof) {
