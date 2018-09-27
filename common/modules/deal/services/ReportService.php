@@ -11,6 +11,7 @@ namespace common\modules\deal\services;
 use PHPHtmlParser\Dom;
 use common\modules\deal\forms\ReportForm;
 use common\modules\deal\helpers\FileHelper;
+use yii\base\InvalidConfigException;
 
 class ReportService
 {
@@ -48,6 +49,7 @@ class ReportService
      *
      * @param $filePath
      * @return array
+     * @throws InvalidConfigException
      */
     public function parseHtml($filePath)
     {
@@ -55,6 +57,7 @@ class ReportService
         $data = [];
         $dom = new Dom;
         $dom->loadFromFile($filePath);
+        $invalidHtml = true;
         $balance = 0;
         $rows = $dom->find('tr');
         foreach ($rows as $row) {
@@ -85,7 +88,14 @@ class ReportService
                     }
                     $i++;
                 }
+            } else {
+                if (preg_match('/Ticket.+Open Time.+Close Time.+Profit/', $row->innerHtml)) {
+                    $invalidHtml = false;
+                }
             }
+        }
+        if ($invalidHtml) {
+            throw new InvalidConfigException('Invalid Report File.');
         }
         FileHelper::deleteFile($filePath);
         return $data;

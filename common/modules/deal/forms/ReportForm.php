@@ -22,7 +22,7 @@ class ReportForm extends Model
     public function rules()
     {
         return [
-            [['reportFile'], 'file', 'skipOnEmpty' => false, 'extensions' => 'html'],
+            [['reportFile'], 'file', 'skipOnEmpty' => false, 'extensions' => 'html,htm'],
         ];
     }
 

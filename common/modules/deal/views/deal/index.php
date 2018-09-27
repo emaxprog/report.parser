@@ -12,7 +12,7 @@ use kartik\file\FileInput;
         <?= FileInput::widget([
             'model' => $form,
             'attribute' => 'reportFile',
-            'options' => ['id' => 'reportFile'],
+            'options' => ['id' => 'reportFile', 'accept' => 'text/html'],
             'pluginOptions' => [
                 'required' => true,
                 'showUpload' => false,
