@@ -62,7 +62,18 @@ class ReportService
             if (is_numeric($ticket = $firstCol->innerHtml)) {
                 if (is_numeric($profit = str_replace(' ', '', $row->lastChild()->innerHtml))) {
                     $columns = $row->find('td');
-                    if (($type = $columns[array_search('Type', $this->fields)]->innerHtml) == 'buy') {
+                    $type = $columns[array_search('Type', $this->fields)]->innerHtml;
+                    if (count($columns) < count($this->fields) && $type !== 'balance') {
+                        continue;
+                    }
+                    if ($type == 'balance') {
+                        $balance += (float)$profit;
+                        $data[$i] = [
+                            'Ticket' => $ticket,
+                            'Type' => $type,
+                            'Profit' => round($balance, 2)
+                        ];
+                    } else {
                         foreach ($this->fields as $key => $col) {
                             if ($col == 'Profit') {
                                 $balance += (float)$columns[$key]->innerHtml;
@@ -71,13 +82,6 @@ class ReportService
                                 $data[$i][$col] = $columns[$key]->innerHtml;
                             }
                         }
-                    } else {
-                        $balance += (float)$profit;
-                        $data[$i] = [
-                            'Ticket' => $ticket,
-                            'Type' => $type,
-                            'Profit' => round($balance, 2)
-                        ];
                     }
                     $i++;
                 }
