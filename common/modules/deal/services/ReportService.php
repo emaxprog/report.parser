@@ -53,7 +53,6 @@ class ReportService
     {
         $i = 0;
         $data = [];
-        $eof = false;
         $dom = new Dom;
         $dom->loadFromFile($filePath);
         $balance = 0;
@@ -67,7 +66,7 @@ class ReportService
                         foreach ($this->fields as $key => $col) {
                             if ($col == 'Profit') {
                                 $balance += (float)$columns[$key]->innerHtml;
-                                $data[$i][$col] = $balance;
+                                $data[$i][$col] = round($balance, 2);
                             } else {
                                 $data[$i][$col] = $columns[$key]->innerHtml;
                             }
@@ -77,16 +76,11 @@ class ReportService
                         $data[$i] = [
                             'Ticket' => $ticket,
                             'Type' => $type,
-                            'Profit' => $balance
+                            'Profit' => round($balance, 2)
                         ];
-                    }
-                    if (!$eof) {
-                        $eof = true;
                     }
                     $i++;
                 }
-            } elseif ($eof) {
-                break;
             }
         }
         FileHelper::deleteFile($filePath);
