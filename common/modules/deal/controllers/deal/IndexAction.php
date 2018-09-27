@@ -10,7 +10,6 @@ namespace common\modules\deal\controllers\deal;
 
 use Yii;
 use yii\base\Action;
-use yii\base\InvalidConfigException;
 use yii\web\Controller;
 use common\modules\deal\forms\ReportForm;
 use common\modules\deal\services\ReportService;
@@ -39,14 +38,9 @@ class IndexAction extends Action
         $form = new ReportForm();
 
         if (Yii::$app->request->isPost) {
-            try {
-                if ($filePath = $this->service->upload($form)) {
-                    return $this->controller->asJson($this->service->parseHtml($filePath));
-                }
-            } catch (InvalidConfigException $e) {
-                $form->addErrors(['reportFile' => $e->getMessage()]);
+            if ($result = $this->service->processReport($form)) {
+                return $this->controller->asJson($result);
             }
-
             Yii::$app->response->statusCode = 403;
             return $this->controller->asJson([
                 'errors' => $form->errors

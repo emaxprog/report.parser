@@ -9,9 +9,9 @@
 namespace common\modules\deal\services;
 
 use PHPHtmlParser\Dom;
+use yii\base\InvalidConfigException;
 use common\modules\deal\forms\ReportForm;
 use common\modules\deal\helpers\FileHelper;
-use yii\base\InvalidConfigException;
 
 class ReportService
 {
@@ -45,6 +45,23 @@ class ReportService
     }
 
     /**
+     * @param ReportForm $form
+     * @return array|bool
+     * @throws \yii\base\Exception
+     */
+    public function processReport(ReportForm $form)
+    {
+        try {
+            if ($filePath = $this->upload($form)) {
+                return $this->parseHtml($filePath);
+            }
+        } catch (InvalidConfigException $e) {
+            $form->addErrors(['reportFile' => $e->getMessage()]);
+        }
+        return false;
+    }
+
+    /**
      * Парсинг HTML
      *
      * @param $filePath
@@ -53,12 +70,11 @@ class ReportService
      */
     public function parseHtml($filePath)
     {
-        $i = 0;
+        $balance = $i = 0;
         $data = [];
+        $invalidHtml = true;
         $dom = new Dom;
         $dom->loadFromFile($filePath);
-        $invalidHtml = true;
-        $balance = 0;
         $rows = $dom->find('tr');
         foreach ($rows as $row) {
             $firstCol = $row->firstChild();
@@ -78,11 +94,12 @@ class ReportService
                         ];
                     } else {
                         foreach ($this->fields as $key => $col) {
+                            $currentVal = $columns[$key]->innerHtml;
                             if ($col == 'Profit') {
-                                $balance += (float)$columns[$key]->innerHtml;
+                                $balance += (float)$currentVal;
                                 $data[$i][$col] = round($balance, 2);
                             } else {
-                                $data[$i][$col] = $columns[$key]->innerHtml;
+                                $data[$i][$col] = $currentVal;
                             }
                         }
                     }
