@@ -8,9 +8,9 @@
 
 namespace common\modules\deal\services;
 
+use yii\base\Model;
 use PHPHtmlParser\Dom;
 use yii\base\InvalidConfigException;
-use common\modules\deal\forms\ReportForm;
 use common\modules\deal\helpers\FileHelper;
 
 class ReportService
@@ -35,21 +35,21 @@ class ReportService
     /**
      * Загрузка файла
      *
-     * @param ReportForm $form
+     * @param Model $form
      * @return bool|string
      * @throws \yii\base\Exception
      */
-    public function upload(ReportForm $form)
+    public function upload(Model $form)
     {
         return $form->validate() ? FileHelper::saveFile($form->reportFile) : false;
     }
 
     /**
-     * @param ReportForm $form
+     * @param Model $form
      * @return array|bool
      * @throws \yii\base\Exception
      */
-    public function processReport(ReportForm $form)
+    public function processReport(Model $form)
     {
         try {
             if ($filePath = $this->upload($form)) {
