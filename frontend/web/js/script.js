@@ -54,12 +54,12 @@ $(document).ready(function () {
                 let data = [];
                 $.each(result, function (index, ticket) {
                     let shortText = `
-                    Ticket : ${ticket['Profit']}
+                    Ticket : ${ticket['Ticket']}
                     Type : ${ticket['Type']}
                     Profit : ${ticket['Profit']}
                     `;
                     let text = `
-                    Ticket : ${ticket['Profit']}
+                    Ticket : ${ticket['Ticket']}
                     Open Time : ${ticket['Open Time']}
                     Type : ${ticket['Type']}
                     Size : ${ticket['Size']}

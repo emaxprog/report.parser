@@ -86,7 +86,7 @@ class ReportService
                         continue;
                     }
                     if ($type == 'balance') {
-                        $balance += (float)$profit;
+                        $balance += (float)str_replace(' ', '', $profit);
                         $data[$i] = [
                             'Ticket' => $ticket,
                             'Type' => $type,
@@ -94,7 +94,7 @@ class ReportService
                         ];
                     } else {
                         foreach ($this->fields as $key => $col) {
-                            $currentVal = $columns[$key]->innerHtml;
+                            $currentVal = str_replace(' ', '', $columns[$key]->innerHtml);
                             if ($col == 'Profit') {
                                 $balance += (float)$currentVal;
                                 $data[$i][$col] = round($balance, 2);
