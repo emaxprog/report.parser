@@ -94,9 +94,9 @@ class ReportService
                         ];
                     } else {
                         foreach ($this->fields as $key => $col) {
-                            $currentVal = str_replace(' ', '', $columns[$key]->innerHtml);
+                            $currentVal = $columns[$key]->innerHtml;
                             if ($col == 'Profit') {
-                                $balance += (float)$currentVal;
+                                $balance += (float)str_replace(' ', '', $currentVal);
                                 $data[$i][$col] = round($balance, 2);
                             } else {
                                 $data[$i][$col] = $currentVal;
